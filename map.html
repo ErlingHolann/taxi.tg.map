@@ -11,78 +11,73 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: sans-serif;
         }
 
         #map {
             width: 100%;
             height: 100vh;
-            z-index: 1;
         }
 
-        /* Фиксированная панель с информацией и кнопкой */
-        #result-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
+        .custom-popup {
             background: white;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            padding: 15px;
-            text-align: center;
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 200px;
+            font-family: sans-serif;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        #confirm-btn {
-            padding: 12px;
-            font-size: 16px;
+        .custom-popup p {
+            margin: 5px 0;
+        }
+
+        .custom-popup button {
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
             background-color: #0078ff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
-        #loading {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 5px;
-            z-index: 1001;
+        .custom-popup button:hover {
+            background-color: #005fcc;
         }
     </style>
 </head>
 <body>
 
-<div id="loading">Определение местоположения...</div>
-
 <div id="map"></div>
-
-<!-- Панель поверх карты -->
-<div id="result-panel">
-    <p><strong>Выбранное место:</strong></p>
-    <p id="coords"></p>
-    <p id="address"></p>
-    <button id="confirm-btn" onclick="sendData()">Подтвердить выбор</button>
-</div>
 
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
 
 <script>
-    let map, marker;
+    let map, marker, popupContent;
 
     function reverseGeocode(lat, lon) {
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
             .then(res => res.json())
             .then(data => {
-                document.getElementById('address').innerText = data.display_name;
+                const address = data.address;
+
+                // Получаем нужные части адреса
+                const city = address.city || address.town || address.village || '';
+                const road = address.road || '';
+                const houseNumber = address.house_number || '';
+
+                const shortAddress = [city, road, houseNumber].filter(Boolean).join(' ');
+
+                // Формируем HTML для попапа
+                popupContent.innerHTML = `
+                    <p><strong>Координаты:</strong> ${lat}, ${lon}</p>
+                    <p><strong>Адрес:</strong> ${shortAddress}</p>
+                    <button onclick="sendData(['${lat}','${lon}'], '${shortAddress.replace(/'/g, "\\'")}')">Подтвердить выбор</button>
+                `;
             });
     }
 
@@ -93,26 +88,34 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        marker = L.marker([lat, lon]).addTo(map);
+        // Создаём контент попапа
+        popupContent = L.DomUtil.create('div', 'custom-popup');
+        popupContent.style.width = '200px';
+
+        // Создаём маркер с попапом
+        marker = L.marker([lat, lon], {
+            icon: L.divIcon({ className: 'custom-marker' })
+        }).addTo(map)
+        .bindPopup(popupContent, {
+            maxWidth: 250,
+            minWidth: 200,
+            closeOnClick: false,
+            autoClose: false
+        });
 
         map.on('click', function(e) {
             const newLat = e.latlng.lat.toFixed(6);
             const newLon = e.latlng.lng.toFixed(6);
 
-            if (marker) {
-                marker.setLatLng(e.latlng);
-            } else {
-                marker = L.marker(e.latlng).addTo(map);
-            }
-
-            document.getElementById('coords').innerText = `Координаты: ${newLat}, ${newLon}`;
-            document.getElementById('result-panel').style.display = 'flex';
+            marker.setLatLng(e.latlng);
+            marker.openPopup();
 
             reverseGeocode(newLat, newLon);
             window.selectedCoords = [newLat, newLon];
         });
 
-        document.getElementById('loading').style.display = 'none';
+        // Открытие попапа сразу после загрузки карты
+        marker.openPopup();
     }
 
     // Определяем местоположение пользователя
@@ -133,29 +136,10 @@
         initMap(55.75, 37.6); // Москва по умолчанию
     }
 
-function sendData() {
-    const coords = selectedCoords.join(',');
-    const address = document.getElementById('address').innerText;
-
-    fetch('http://localhost:5000/save-data', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ coords, address })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Успех:', data);
-        alert("Данные успешно отправлены!");
-
-        // Закрываем вкладку (работает только при явном действии пользователя)
-        window.close();
-    })
-    .catch((error) => {
-        console.error('Ошибка:', error);
-        alert("Ошибка при отправке данных.");
-    });
+    function sendData(coords, address) {
+        const botUrl = "https://t.me/my_bot?start=";
+        const encoded = encodeURIComponent(JSON.stringify({coords: coords.join(','), address}));
+        window.location.href = botUrl + encoded;
     }
 </script>
 

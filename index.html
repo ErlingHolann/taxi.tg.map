@@ -12,13 +12,16 @@
     <button onclick="sendValue('Option 3')">Option 3</button>
 
     <script>
+        console.log("Telegram.WebApp:", window.Telegram?.WebApp);
+
         function sendValue(value) {
+            console.log("Кнопка нажата:", value);
             if (window.Telegram && window.Telegram.WebApp) {
-                // Отправляем данные в бота
-                window.Telegram.WebApp.sendData(value);
-                window.Telegram.WebApp.close(); // закрыть окно после выбора
+                console.log("Отправляем данные:", value);
+                Telegram.WebApp.sendData(value);
+                Telegram.WebApp.close();
             } else {
-                alert("Not in Telegram WebApp");
+                alert("Ошибка: не в Telegram WebApp!");
             }
         }
     </script>

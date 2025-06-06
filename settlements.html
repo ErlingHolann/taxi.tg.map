@@ -88,6 +88,7 @@
         console.log("JSON:", dataToSend); // проверяем, что сериализация успешна
 
         Telegram.WebApp.sendData("Good job!");
+        Telegram.WebApp.close();
 //dataToSend
     } else {
         alert("Telegram WebApp недоступен.");

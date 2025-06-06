@@ -1,34 +1,24 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <script src="https://unpkg.com/@grammyjs/telegram-web-app@3.0.0"></script>
     <meta charset="UTF-8">
-    <title>Тест Web App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <title>Выберите значение</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script> 
 </head>
 <body>
-    <h2>Тест Web App</h2>
-    <button onclick="sendData()">Отправить данные</button>
+    <h2>Выберите значение:</h2>
+    <button onclick="sendValue('Option 1')">Option 1</button>
+    <button onclick="sendValue('Option 2')">Option 2</button>
+    <button onclick="sendValue('Option 3')">Option 3</button>
 
     <script>
-        // Проверяем загрузку Telegram.WebApp
-        window.onload = function () {
+        function sendValue(value) {
             if (window.Telegram && window.Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                console.log("Telegram.WebApp готов");
+                // Отправляем данные в бота
+                window.Telegram.WebApp.sendData(value);
+                window.Telegram.WebApp.close(); // закрыть окно после выбора
             } else {
-                console.error("Telegram.WebApp не доступен");
-                alert("Ошибка: откройте эту страницу через Telegram");
-            }
-        };
-
-        function sendData() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                Telegram.WebApp.sendData("Hello from Web App!");
-                Telegram.WebApp.close();
-            } else {
-                alert("Telegram.WebApp не доступен");
+                alert("Not in Telegram WebApp");
             }
         }
     </script>

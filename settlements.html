@@ -97,7 +97,7 @@
         const dataToSend = JSON.stringify(item);
         console.log("JSON:", dataToSend); // проверяем, что сериализация успешна
 
-        Telegram.WebApp.sendData("Good job!");
+        Telegram.WebApp.sendData(dataToSend);
         Telegram.WebApp.close();
 //dataToSend
     } else {

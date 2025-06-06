@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Telegram WebApp Select</title>
+</head>
+<body>
+  <h2>Выберите элемент:</h3>
+  <select id="mySelect">
+    <option value="">-- Выберите --</option>
+    <option value="1">Элемент 1</option>
+    <option value="2">Элемент 2</option>
+    <option value="3">Элемент 3</option>
+  </select>
+
+  <script>
+    // Инициализация Telegram WebApp
+    if (window.Telegram && Telegram.WebApp) {
+      Telegram.WebApp.ready();
+    }
+
+    document.getElementById('mySelect').addEventListener('change', function () {
+      const selectedValue = this.value;
+      console.log("Выбрано значение:", selectedValue);
+    });
+  </script>
+</body>
+</html>

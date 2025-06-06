@@ -82,12 +82,19 @@
 
     // Отправка выбранного элемента в Telegram
     function sendDataToBot(item) {
-        if (window.Telegram && window.Telegram.WebApp) {
-            Telegram.WebApp.sendData(JSON.stringify(item)); // отправляем как строку
-            Telegram.WebApp.close(); // закрываем WebApp после выбора
-        } else {
-            alert("Telegram WebApp недоступен.");
-        }
+           if (window.Telegram && window.Telegram.WebApp) {
+        console.log("Отправляем:", item); // проверяем, что item корректный
+        const dataToSend = JSON.stringify(item);
+        console.log("JSON:", dataToSend); // проверяем, что сериализация успешна
+
+        Telegram.WebApp.sendData(dataToSend);
+
+        setTimeout(() => {
+            Telegram.WebApp.close();
+        }, 500);
+    } else {
+        alert("Telegram WebApp недоступен.");
+    }
     }
 </script>
 

@@ -2,11 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Telegram WebApp Select</title>
+  <title>WebApp</title>
 </head>
 <body>
-  <h2>Выберите элемент:</h3>
+  <h3>Выберите элемент:</h3>
   <select id="mySelect">
     <option value="">-- Выберите --</option>
     <option value="1">Элемент 1</option>
@@ -15,14 +14,22 @@
   </select>
 
   <script>
-    // Инициализация Telegram WebApp
-    if (window.Telegram && Telegram.WebApp) {
-      Telegram.WebApp.ready();
-    }
+    const select = document.getElementById('mySelect');
 
-    document.getElementById('mySelect').addEventListener('change', function () {
+    select.addEventListener('change', function () {
       const selectedValue = this.value;
-      console.log("Выбрано значение:", selectedValue);
+
+      // Отправляем данные в Telegram WebApp
+      if (window.Telegram && Telegram.WebApp) {
+        Telegram.WebApp.ready();
+
+        // Отправляем данные на сервер
+        fetch('/webhook', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ value: selectedValue })
+        });
+      }
     });
   </script>
 </body>

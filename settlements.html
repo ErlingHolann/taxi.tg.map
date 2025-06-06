@@ -37,12 +37,12 @@
 <input type="text" id="searchInput" placeholder="Поиск..." />
 
 <ul id="results"></ul>
-
+<script async src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
     let data = []; // для хранения данных из JSON
 
     // Загрузка JSON
-    fetch('https://erlingholann.github.io/taxi.tg.map/data.json') // замени на свой URL, если файл находится не локально
+    fetch('data.json') // замени на свой URL, если файл находится не локально
         .then(response => response.json())
         .then(jsonData => {
             data = jsonData;

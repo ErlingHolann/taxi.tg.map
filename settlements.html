@@ -30,6 +30,17 @@
             background-color: #f0f0f0;
         }
     </style>
+  <script src="https://unpkg.com/@grammyjs/telegram-web-app@3.0.0"></script> 
+
+    <script>
+        window.onload = function () {
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                console.log("Telegram.WebApp готов");
+            } else {
+                alert("Ошибка: откройте страницу через Telegram");
+            }
+        };
 </head>
 <body>
 
@@ -37,7 +48,6 @@
 <input type="text" id="searchInput" placeholder="Поиск..." />
 
 <ul id="results"></ul>
-<script src="https://telegram.org/js/telegram-webapp.js"></script> 
 <script>
     let data = []; // для хранения данных из JSON
 

@@ -42,7 +42,7 @@
     let data = []; // для хранения данных из JSON
 
     // Загрузка JSON
-    fetch('data.json') // замени на свой URL, если файл находится не локально
+    fetch('https://erlingholann.github.io/taxi.tg.map/data.json') // замени на свой URL, если файл находится не локально
         .then(response => response.json())
         .then(jsonData => {
             data = jsonData;

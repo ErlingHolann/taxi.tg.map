@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>WebApp</title>
+    <meta charset="UTF-8" />
+    <title>Test Web App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/@grammyjs/telegram-web-app@3.0.0"></script> 
 </head>
 <body>
-  <h3>Выберите элемент:</h3>
-  <select id="mySelect">
-    <option value="">-- Выберите --</option>
-    <option value="1">Элемент 1</option>
-    <option value="2">Элемент 2</option>
-    <option value="3">Элемент 3</option>
-  </select>
+    <h2>Тест Web App</h2>
+    <button onclick="sendData()">Отправить данные</button>
 
-  <script>
-    const select = document.getElementById('mySelect');
+    <script>
+        // Проверяем доступность Telegram.WebApp
+        window.onload = function() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                console.log("Telegram.WebApp готов к работе");
+            } else {
+                alert("Telegram.WebApp недоступен. Откройте страницу через Telegram.");
+                console.error("Telegram.WebApp не найден");
+            }
+        };
 
-    select.addEventListener('change', function () {
-      const selectedValue = this.value;
-
-      // Отправляем данные в Telegram WebApp
-      if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.ready();
-
-        // Отправляем данные на сервер
-        fetch('/webhook', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ value: selectedValue })
-        });
-      }
-    });
-  </script>
+        function sendData() {
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log("Отправляем данные...");
+                Telegram.WebApp.sendData("Hello from Web App!");
+                Telegram.WebApp.close();
+            } else {
+                alert("Telegram.WebApp не доступен");
+            }
+        }
+    </script>
 </body>
 </html>
